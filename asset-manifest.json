@@ -1,0 +1,25 @@
+{
+  "files": {
+    "main.css": "/rule-engine-demo-client/static/css/main.485de060.chunk.css",
+    "main.js": "/rule-engine-demo-client/static/js/main.1a40fb0f.chunk.js",
+    "main.js.map": "/rule-engine-demo-client/static/js/main.1a40fb0f.chunk.js.map",
+    "runtime-main.js": "/rule-engine-demo-client/static/js/runtime-main.ce20f7d7.js",
+    "runtime-main.js.map": "/rule-engine-demo-client/static/js/runtime-main.ce20f7d7.js.map",
+    "static/css/2.c8fdb744.chunk.css": "/rule-engine-demo-client/static/css/2.c8fdb744.chunk.css",
+    "static/js/2.9ede506f.chunk.js": "/rule-engine-demo-client/static/js/2.9ede506f.chunk.js",
+    "static/js/2.9ede506f.chunk.js.map": "/rule-engine-demo-client/static/js/2.9ede506f.chunk.js.map",
+    "index.html": "/rule-engine-demo-client/index.html",
+    "precache-manifest.c2966d2703563f85591019cba670c59d.js": "/rule-engine-demo-client/precache-manifest.c2966d2703563f85591019cba670c59d.js",
+    "service-worker.js": "/rule-engine-demo-client/service-worker.js",
+    "static/css/2.c8fdb744.chunk.css.map": "/rule-engine-demo-client/static/css/2.c8fdb744.chunk.css.map",
+    "static/css/main.485de060.chunk.css.map": "/rule-engine-demo-client/static/css/main.485de060.chunk.css.map",
+    "static/js/2.9ede506f.chunk.js.LICENSE.txt": "/rule-engine-demo-client/static/js/2.9ede506f.chunk.js.LICENSE.txt"
+  },
+  "entrypoints": [
+    "static/js/runtime-main.ce20f7d7.js",
+    "static/css/2.c8fdb744.chunk.css",
+    "static/js/2.9ede506f.chunk.js",
+    "static/css/main.485de060.chunk.css",
+    "static/js/main.1a40fb0f.chunk.js"
+  ]
+}
