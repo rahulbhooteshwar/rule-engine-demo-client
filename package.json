@@ -15,6 +15,7 @@
     "react-scripts": "3.4.1"
   },
   "scripts": {
+    "predeploy": "yarn run build && cp ./build/index.html ./build/404.html",
     "start": "react-scripts start",
     "build": "react-scripts build",
     "test": "react-scripts test",

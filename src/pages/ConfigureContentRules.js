@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react'
-import { List, Row, Col, Card, message, Skeleton, Spin, Typography, Divider, Result, Button, Space, PageHeader } from 'antd'
+import { List, Row, Col, Card, message, Skeleton, Spin, Typography, Divider, Result, Button, Space, PageHeader, Radio } from 'antd'
 import RuleList from '../components/RuleList'
 import { useParams, useHistory } from 'react-router';
 import Axios from 'axios';
@@ -39,6 +39,18 @@ const ConfigureContentRules = () => {
       const { data } = await Axios.put(`${process.env.REACT_APP_API_URL}/contents/${_id}`, { rules: ruleIds });
       setContent(data);
       setUpdatingRules(false)
+    } catch (e) {
+      message.error(e.message)
+      setUpdatingRules(false)
+    }
+  }
+  const updateRuleMatchType = async (ruleMatchType) => {
+    setUpdatingRules(true)
+    try {
+      const { data } = await Axios.put(`${process.env.REACT_APP_API_URL}/contents/${_id}`, { ruleMatchType });
+      setContent(data);
+      setUpdatingRules(false)
+      message.success(`Updated: ${ruleMatchType} rule(s) will be matched during content targetting for users!`)
     } catch (e) {
       message.error(e.message)
       setUpdatingRules(false)
@@ -88,22 +100,32 @@ const ConfigureContentRules = () => {
                       updatingRules
                         ? <Skeleton active paragraph={{ rows: 20 }}></Skeleton>
                         : content.rules && content.rules.length > 0
-                          ? <List
-                            size="large"
-                            bordered
-                            dataSource={content.rules}
-                            renderItem={
-                              item => <List.Item>
-                                <Text>{item.title}</Text>
-                                <Space>
-                                  <Button onClick={() => onRuleRemove(item._id)} title="Remove Rule" type="danger" shape="circle" icon={<DeleteOutlined />} />
-                                  <Button onClick={() => setSearch(item.title)} type="primary" icon={<FundViewOutlined />}>View Dteails</Button>
-                                  {/* <Link to={`/rules/update/${item._id}`} target="_blank">
-                                </Link> */}
-                                </Space>
-                              </List.Item>
-                            }
-                          />
+                          ? <>
+                            <Text type="primary" strong>Match Type</Text>
+                            <br />
+                            <Radio.Group
+                              options={[{ label: 'Match All', value: 'ALL' }, { label: 'Match Any', value: 'ANY' }]}
+                              onChange={e => updateRuleMatchType(e.target.value)}
+                              value={content.ruleMatchType}
+                              optionType="button"
+                              buttonStyle="solid"
+                            />
+                            <br />
+                            <List
+                              size="large"
+                              bordered
+                              dataSource={content.rules}
+                              renderItem={
+                                item => <List.Item>
+                                  <Text>{item.title}</Text>
+                                  <Space>
+                                    <Button onClick={() => onRuleRemove(item._id)} title="Remove Rule" type="danger" shape="circle" icon={<DeleteOutlined />} />
+                                    <Button onClick={() => setSearch(item.title)} type="primary" icon={<FundViewOutlined />}>View Dteails</Button>
+                                  </Space>
+                                </List.Item>
+                              }
+                            />
+                          </>
                           : <Result
                             status="404"
                             title="No Rules Applied"
