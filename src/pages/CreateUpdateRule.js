@@ -1,3 +1,4 @@
+/* eslint-disable react-hooks/exhaustive-deps */
 import React, { useEffect, useState } from 'react'
 import Axios from 'axios'
 import { message, Row, Col, Card, Space, Button, Spin, PageHeader } from 'antd';
@@ -182,6 +183,7 @@ const CreateUpdateRule = () => {
         className="site-page-header"
         onBack={() => history.push('/rules')}
         title="Back to Rules"
+        subTitle="Manage rules associated with content"
       />
 
       <Row>
