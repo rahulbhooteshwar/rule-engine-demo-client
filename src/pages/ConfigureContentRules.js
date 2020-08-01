@@ -76,7 +76,7 @@ const ConfigureContentRules = () => {
       <PageHeader
         className="site-page-header"
         onBack={() => history.push('/contents')}
-        title="Configure Rules"
+        title="Back"
         subTitle="Manage rules associated with content"
       />
 

@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react'
 import { useParams, useHistory } from 'react-router'
 import Axios from 'axios'
-import { message, Row, Col, Card, Skeleton, Button, Space, Spin } from 'antd'
+import { message, Row, Col, Card, Skeleton, Button, Space, Spin, PageHeader } from 'antd'
 import CreateUpdateUserForm from '../components/CreateUpdateUserForm'
 
 const CreateUpdateUser = () => {
@@ -57,11 +57,16 @@ const CreateUpdateUser = () => {
   }
   return (
     <>
+      <PageHeader
+        className="site-page-header"
+        onBack={() => history.push('/users')}
+        title="Users"
+      />
       <Row>
         <Col span={8} />
         <Col span={8}>
           <Card bordered>
-            <h2>{_id? 'Update User' : 'Create User'}</h2>
+            <h2>{_id ? 'Update User' : 'Create User'}</h2>
             {!loading
               ? <>
                 <Spin size="large" spinning={submitting}>
@@ -79,7 +84,7 @@ const CreateUpdateUser = () => {
                     <Button onClick={() => { history.push('/users') }} size="large" >Cancel</Button>
                   </Space>
                   <Space style={{ float: 'right' }}>
-                    <Button disabled={!name || !region || !country || !market || !issuerSegmentation || !lang} onClick={handleSubmit} size="large" type="primary">{_id? 'Update' : 'Create'}</Button>
+                    <Button disabled={!name || !region || !country || !market || !issuerSegmentation || !lang} onClick={handleSubmit} size="large" type="primary">{_id ? 'Update' : 'Create'}</Button>
                   </Space>
                 </Spin>
               </>

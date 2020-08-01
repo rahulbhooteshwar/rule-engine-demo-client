@@ -1,7 +1,7 @@
 import React from 'react';
-import { Layout, Menu } from 'antd';
-import { ScheduleOutlined } from '@ant-design/icons';
-import { NavLink, useLocation, Route, Switch, Redirect } from 'react-router-dom';
+import { Layout, Menu, Result, Button } from 'antd';
+import { ScheduleOutlined, UsergroupAddOutlined, LoginOutlined, PicLeftOutlined } from '@ant-design/icons';
+import { NavLink, useLocation, Route, Switch, Redirect, Link } from 'react-router-dom';
 import Rules from './pages/Rules';
 import CreateUpdateRule from './pages/CreateUpdateRule';
 import Users from './pages/Users';
@@ -16,11 +16,13 @@ function App() {
   return (
     <Layout className="layout">
       <Header>
-        <div className="logo" >RULE ENGINE DEMO</div>
+        <Link to="/">
+          <div className="logo" >RULE ENGINE DEMO</div>
+        </Link>
         <Menu theme="dark" mode="horizontal" selectedKeys={[location.pathname,]}>
           <Menu.Item key="/users">
             <NavLink to="/users">
-              <ScheduleOutlined />
+              <UsergroupAddOutlined />
               <strong>Users</strong>
             </NavLink>
           </Menu.Item>
@@ -32,8 +34,14 @@ function App() {
           </Menu.Item>
           <Menu.Item key="/contents">
             <NavLink to="/contents">
-              <ScheduleOutlined />
+              <PicLeftOutlined />
               <strong>Contents</strong>
+            </NavLink>
+          </Menu.Item>
+          <Menu.Item key="/simulate">
+            <NavLink to="/simulate">
+              <LoginOutlined />
+              <strong>Simulate User Session</strong>
             </NavLink>
           </Menu.Item>
         </Menu>
@@ -41,8 +49,16 @@ function App() {
       <Content>
         <div style={{ backgroundColor: 'white', minHeight: '100vh' }}>
           <Switch>
+            <Route path="/simulate">
+              <Result
+                status="500"
+                title="Working on It"
+                subTitle="Sit back & Relax, this feature will be added soon"
+                extra={<Link to="/"><Button type="primary">Back Home</Button></Link>}
+              />
+            </Route>
             <Route path="/contents/:_id">
-              <ConfigureContentRules/>
+              <ConfigureContentRules />
             </Route>
             <Route path="/contents">
               <Contents />

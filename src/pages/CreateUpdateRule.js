@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react'
 import Axios from 'axios'
-import { message, Row, Col, Card, Space, Button, Spin } from 'antd';
+import { message, Row, Col, Card, Space, Button, Spin, PageHeader } from 'antd';
 import CreateUpdateRuleForm from '../components/CreateUpdateRuleForm';
 import { useHistory, useParams } from 'react-router';
 
@@ -177,35 +177,43 @@ const CreateUpdateRule = () => {
   }
 
   return (
-    <Row>
-      <Col flex="1"></Col>
-      <Col flex="1">
-        <Card bordered>
-          <h2>{_id ? 'Update Rule' : 'Create Rule'}</h2>
-          <Spin size="large" spinning={submitting}>
-            <CreateUpdateRuleForm {...{
-              loading, setLoading,
-              data, setData,
-              filteredData, setFilteredData,
-              selectedRegions, setSelectedRegiions,
-              selectedMarkets, setSelectedMarkets,
-              selectedCountries, setSelectedCountries,
-              selectedLanguages, setSelectedLanguages,
-              selectedIssuerSegmentations, setSelectedIssuerSegmentations,
-              title, setTitle,
-              matchType, setMatchType
-            }} />
-            <Space style={{ float: 'left', marginTop: '25px' }}>
-              <Button onClick={() => { history.push('/rules') }} size="large" >Cancel</Button>
-            </Space>
-            <Space style={{ float: 'right', marginTop: '25px' }}>
-              <Button disabled={!(selectedRegions && selectedRegions.length > 0) || !title || !matchType} onClick={handleSubmit} size="large" type="primary">{_id ? 'Update' : 'Create'}</Button>
-            </Space>
-          </Spin>
-        </Card>
-      </Col>
-      <Col flex="1"></Col>
-    </Row>
+    <>
+      <PageHeader
+        className="site-page-header"
+        onBack={() => history.push('/rules')}
+        title="Back to Rules"
+      />
+
+      <Row>
+        <Col flex="1"></Col>
+        <Col flex="1">
+          <Card bordered>
+            <h2>{_id ? 'Update Rule' : 'Create Rule'}</h2>
+            <Spin size="large" spinning={submitting}>
+              <CreateUpdateRuleForm {...{
+                loading, setLoading,
+                data, setData,
+                filteredData, setFilteredData,
+                selectedRegions, setSelectedRegiions,
+                selectedMarkets, setSelectedMarkets,
+                selectedCountries, setSelectedCountries,
+                selectedLanguages, setSelectedLanguages,
+                selectedIssuerSegmentations, setSelectedIssuerSegmentations,
+                title, setTitle,
+                matchType, setMatchType
+              }} />
+              <Space style={{ float: 'left', marginTop: '25px' }}>
+                <Button onClick={() => { history.push('/rules') }} size="large" >Cancel</Button>
+              </Space>
+              <Space style={{ float: 'right', marginTop: '25px' }}>
+                <Button disabled={!(selectedRegions && selectedRegions.length > 0) || !title || !matchType} onClick={handleSubmit} size="large" type="primary">{_id ? 'Update' : 'Create'}</Button>
+              </Space>
+            </Spin>
+          </Card>
+        </Col>
+        <Col flex="1"></Col>
+      </Row>
+    </>
   )
 }
 
