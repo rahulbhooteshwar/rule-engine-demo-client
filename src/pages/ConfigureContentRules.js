@@ -1,10 +1,11 @@
-import React, { useState, useEffect } from 'react'
-import { List, Row, Col, Card, message, Skeleton, Spin, Typography, Divider, Result, Button, Space, PageHeader, Radio } from 'antd'
+import React, { useState, useEffect} from 'react'
+import { List, Row, Switch, Col, Card, message, Skeleton, Spin, Typography, Divider, Result, Button, Space, PageHeader, Radio } from 'antd'
 import RuleList from '../components/RuleList'
 import { useParams, useHistory } from 'react-router';
 import Axios from 'axios';
 import Avatar from 'antd/lib/avatar/avatar';
 import { DeleteOutlined, FundViewOutlined } from '@ant-design/icons'
+import RegionSelector from '../components/RegionSelector';
 const { Title, Text } = Typography
 const ConfigureContentRules = () => {
   const history = useHistory();
@@ -13,6 +14,8 @@ const ConfigureContentRules = () => {
   const [content, setContent] = useState();
   const [updatingRules, setUpdatingRules] = useState(false);
   const [search, setSearch] = useState();
+  const [region, setRegion] = useState('5f22f961ab69d5439029b3e8');
+  const [lazy, setLazy] = useState(true)
   const onRuleSelect = async (newRuleId) => {
     // get current rule list , add this rule to that & update the content with it
     const ruleIds = content.rules.map(({ _id }) => _id)
@@ -78,7 +81,15 @@ const ConfigureContentRules = () => {
         onBack={() => history.push('/contents')}
         title="Back"
         subTitle="Manage rules associated with content"
-      />
+        extra={
+          (
+            <div style={{width: 200}}>
+              Currently Managing:  <RegionSelector {...{ region, setRegion }} />
+            </div>
+          )
+        }
+      >
+      </PageHeader>
 
       <Row>
         <Col span={12}>
@@ -141,8 +152,9 @@ const ConfigureContentRules = () => {
         </Col>
         <Col span={12}>
           <Card title="Search & Apply Rules" bordered style={{ width: '100%', minHeight: '80vh' }}>
+            <Switch checkedChildren="Search Only" unCheckedChildren="Show All" onChange={() => setLazy(!lazy) && setSearch(null)} />
             <div style={{ height: '90vh', overflowY: 'auto' }}>
-              <RuleList search={search} lazy clickAction={onRuleSelect}></RuleList>
+              <RuleList search={search} region={region} lazy={lazy} clickAction={onRuleSelect}></RuleList>
             </div>
           </Card>
         </Col>

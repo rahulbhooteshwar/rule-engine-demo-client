@@ -74,8 +74,8 @@ const Contents = () => {
             {
               contents
                 ? contents.map(
-                  item => <Col span={8}>
-                    <Card key={item._id}
+                  item => <Col span={8} key={item._id}>
+                    <Card
                       style={{ width: 500, marginTop: 16 }}
                       actions={[
                         <><SettingOutlined key="rules" onClick={() => history.push(`/contents/${item._id}`)} /> Rules</>,

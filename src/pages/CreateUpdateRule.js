@@ -161,6 +161,11 @@ const CreateUpdateRule = () => {
         inValues: selectedIssuerSegmentations
       })
     }
+    if (!body.conditions || body.conditions.length === 0) {
+      message.error('Rules without conditions have no significance!', 3);
+      setSubmitting(false)
+      return
+    }
     try {
       if (_id) {
         await Axios.put(`${process.env.REACT_APP_API_URL}/rules/${_id}`, body);
@@ -208,7 +213,7 @@ const CreateUpdateRule = () => {
                 <Button onClick={() => { history.push('/rules') }} size="large" >Cancel</Button>
               </Space>
               <Space style={{ float: 'right', marginTop: '25px' }}>
-                <Button disabled={!(selectedRegions && selectedRegions.length > 0) || !title || !matchType} onClick={handleSubmit} size="large" type="primary">{_id ? 'Update' : 'Create'}</Button>
+                <Button disabled={!(selectedRegions && selectedRegions.length > 0) || !title || !matchType } onClick={handleSubmit} size="large" type="primary">{_id ? 'Update' : 'Create'}</Button>
               </Space>
             </Spin>
           </Card>
