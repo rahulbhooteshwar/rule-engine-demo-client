@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { Layout, Menu, notification, Result } from 'antd';
-import { ScheduleOutlined, UsergroupAddOutlined, LoginOutlined, PicLeftOutlined } from '@ant-design/icons';
+import { GithubOutlined, ScheduleOutlined, UsergroupAddOutlined, LoginOutlined, PicLeftOutlined } from '@ant-design/icons';
 import { NavLink, useLocation, Route, Switch, Redirect, Link } from 'react-router-dom';
 import Rules from './pages/Rules';
 import CreateUpdateRule from './pages/CreateUpdateRule';
@@ -73,6 +73,21 @@ function App() {
               <strong>Simulate User Session</strong>
             </NavLink>
           </Menu.Item>
+          <Menu.Item style={{ float: "right" }}>
+            <a target="blank" href="https://github.com/rahulbhooteshwar/rule-engine-demo-client">
+            <GithubOutlined /> <strong style={{color: 'orange'}}>UI</strong>
+            </a>
+          </Menu.Item>
+          <Menu.Item style={{ float: "right" }}>
+            <a target="blank" href="https://github.com/rahulbhooteshwar/rule-engine-demo-server">
+            <GithubOutlined /> <strong style={{color: 'orange'}}>API</strong>
+            </a>
+          </Menu.Item>
+          <Menu.Item style={{ float: "right" }}>
+            <a target="blank" href="https://rahulbhooteshwar.github.io">
+              Brought to you by: <strong style={{color: 'orange'}}>Rahul Bhooteshwar</strong>
+            </a>
+          </Menu.Item>
         </Menu>
       </Header>
       <Content>
@@ -113,7 +128,7 @@ function App() {
               </Switch>
 
               : <Result
-                style={{paddingTop: 200}}
+                style={{ paddingTop: 200 }}
                 status="500"
                 title="Let's be clear at first place"
                 subTitle="Read & Close the notification to continue."
@@ -121,7 +136,7 @@ function App() {
           }
         </div>
       </Content>
-      <Footer style={{ textAlign: 'center' }}>Ant Design ©2018 Created by Ant UED</Footer>
+      <Footer style={{ textAlign: 'center' }}>Rule Engine Demo ©2020 Created by <a target="blank" href="https://rahulbhooteshwar.github.io">Rahul Bhooteshwar</a></Footer>
     </Layout>
   );
 }
