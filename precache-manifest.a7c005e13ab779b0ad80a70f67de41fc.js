@@ -1,6 +1,6 @@
 self.__precacheManifest = (self.__precacheManifest || []).concat([
   {
-    "revision": "f9ccb7ac0f88c542a73540d2583b2b97",
+    "revision": "952e838ac073d2b94135be0e0398a12f",
     "url": "/rule-engine-demo-client/index.html"
   },
   {
@@ -8,7 +8,7 @@ self.__precacheManifest = (self.__precacheManifest || []).concat([
     "url": "/rule-engine-demo-client/static/css/2.9c8c8187.chunk.css"
   },
   {
-    "revision": "b87b6375f4e47ed7f2d8",
+    "revision": "92d05da763ea40738bb2",
     "url": "/rule-engine-demo-client/static/css/main.e32d1c8e.chunk.css"
   },
   {
@@ -20,8 +20,8 @@ self.__precacheManifest = (self.__precacheManifest || []).concat([
     "url": "/rule-engine-demo-client/static/js/2.17a128cb.chunk.js.LICENSE.txt"
   },
   {
-    "revision": "b87b6375f4e47ed7f2d8",
-    "url": "/rule-engine-demo-client/static/js/main.3f74bbb8.chunk.js"
+    "revision": "92d05da763ea40738bb2",
+    "url": "/rule-engine-demo-client/static/js/main.55860f3f.chunk.js"
   },
   {
     "revision": "76a70310be6b551dbef7",
