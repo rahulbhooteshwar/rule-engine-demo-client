@@ -9,7 +9,7 @@ const CreateUpdateRuleForm = ({
   filteredData,
   title, setTitle,
   matchType, setMatchType,
-  selectedRegions, setSelectedRegiions,
+  selectedRegions, setSelectedRegions,
   selectedMarkets, setSelectedMarkets,
   selectedCountries, setSelectedCountries,
   selectedLanguages, setSelectedLanguages,
@@ -31,7 +31,7 @@ const CreateUpdateRuleForm = ({
           <Text type="primary" strong>Available in Regions</Text>
           <Select
             value={selectedRegions}
-            onChange={regions => setSelectedRegiions(regions)}
+            onChange={regions => setSelectedRegions(regions)}
             mode="multiple"
             size="large"
             filterOption

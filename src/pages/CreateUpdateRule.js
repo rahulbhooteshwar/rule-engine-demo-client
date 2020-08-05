@@ -12,7 +12,7 @@ const CreateUpdateRule = () => {
   const [submitting, setSubmitting] = useState(false);
   const [data, setData] = useState();
   const [filteredData, setFilteredData] = useState({});
-  const [selectedRegions, setSelectedRegiions] = useState([]);
+  const [selectedRegions, setSelectedRegions] = useState([]);
   const [selectedMarkets, setSelectedMarkets] = useState([]);
   const [selectedCountries, setSelectedCountries] = useState([]);
   const [selectedLanguages, setSelectedLanguages] = useState([]);
@@ -41,37 +41,24 @@ const CreateUpdateRule = () => {
   const initFormData = async () => {
     const { data: rule } = await Axios.get(`${process.env.REACT_APP_API_URL}/rules/${_id}`);
     setTitle(rule.title);
-    setSelectedRegiions(rule.regions);
     setMatchType(rule.conditionMatchType);
-    rule.conditions.forEach((condition) => {
-      switch (condition.attribute) {
-        case 'country': {
-          setSelectedCountries(condition.inValues)
-          break;
-        }
-        //  In order to avoid race condition between country & language we will do it separately after this
-        // case 'lang': {
-        //   setSelectedLanguages(condition.inValues)
-        //   break;
-        // }
-        case 'market': {
-          setSelectedMarkets(condition.inValues)
-          break;
-        }
-        case 'issuerSegmentation': {
-          setSelectedIssuerSegmentations(condition.inValues)
-          break;
-        }
-        default: {
-          // do nothing
-        }
-      }
-    })
-    // update languages separately
     const langCondition = rule.conditions.find(condition => condition.attribute === 'lang')
     if (langCondition) {
       setSelectedLanguages(langCondition.inValues)
     }
+    const marketCondition = rule.conditions.find(condition => condition.attribute === 'market')
+    if (marketCondition) {
+      setSelectedMarkets(marketCondition.inValues)
+    }
+    const segCondition = rule.conditions.find(condition => condition.attribute === 'issuerSegmentation')
+    if (segCondition) {
+      setSelectedIssuerSegmentations(segCondition.inValues)
+    }
+    const countryCondition = rule.conditions.find(condition => condition.attribute === 'country')
+    if (countryCondition) {
+      setSelectedCountries(countryCondition.inValues)
+    }
+    setSelectedRegions(rule.regions);
   }
   const onRegionSelect = () => {
     if (data) {
@@ -201,7 +188,7 @@ const CreateUpdateRule = () => {
                 loading, setLoading,
                 data, setData,
                 filteredData, setFilteredData,
-                selectedRegions, setSelectedRegiions,
+                selectedRegions, setSelectedRegions,
                 selectedMarkets, setSelectedMarkets,
                 selectedCountries, setSelectedCountries,
                 selectedLanguages, setSelectedLanguages,
