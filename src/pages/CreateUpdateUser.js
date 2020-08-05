@@ -1,10 +1,12 @@
-import React, { useEffect, useState } from 'react'
+import React, { useEffect, useState, useContext } from 'react'
 import { useParams, useHistory } from 'react-router'
 import Axios from 'axios'
 import { message, Row, Col, Card, Skeleton, Button, Space, Spin, PageHeader } from 'antd'
 import CreateUpdateUserForm from '../components/CreateUpdateUserForm'
+import { UserContext } from '../context/UserContext'
 
 const CreateUpdateUser = () => {
+  const { dispatchUserListAction } = useContext(UserContext)
   const history = useHistory();
   const { _id } = useParams()
   const [loading, setLoading] = useState(false);
@@ -43,10 +45,11 @@ const CreateUpdateUser = () => {
     setSubmitting(true);
     try {
       if (_id) {
-        await Axios.put(`${process.env.REACT_APP_API_URL}/users/${_id}`, { name, region, country, lang: lang, market, issuerSegmentation });
-        message.success('User Updated Successfully', 3)
+        const { data } = await Axios.put(`${process.env.REACT_APP_API_URL}/users/${_id}`, { name, region, country, lang: lang, market, issuerSegmentation });
+        dispatchUserListAction({ type: 'UPDATE', payload: data });
       } else {
-        await Axios.post(`${process.env.REACT_APP_API_URL}/users`, { name, region, country, lang: lang, market, issuerSegmentation });
+        const { data } = await Axios.post(`${process.env.REACT_APP_API_URL}/users`, { name, region, country, lang: lang, market, issuerSegmentation });
+        dispatchUserListAction({ type: 'ADD', payload: data });
         message.success('User Created Successfully', 3)
       }
       history.push('/users')

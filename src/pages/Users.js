@@ -1,24 +1,14 @@
-import React, { useState, useEffect } from 'react'
-import { Row, Col, Card, Button, Typography, message, Skeleton, Tag } from 'antd'
+import React, { useContext } from 'react'
+import { Row, Col, Card, Button, Typography, Skeleton, Tag } from 'antd'
 import { PlusOutlined } from '@ant-design/icons'
-import Axios from 'axios';
 import Avatar from 'antd/lib/avatar/avatar';
 import { Link, useHistory } from 'react-router-dom';
+import { UserContext } from '../context/UserContext';
 const { Title} = Typography;
 
 const Users = () => {
   const history = useHistory();
-  const [users, setUsers] = useState();
-  useEffect(() => {
-    (async () => {
-      try {
-        const { data } = await Axios.get(`${process.env.REACT_APP_API_URL}/users`);
-        setUsers(data)
-      } catch (e) {
-        message.error(e.message, 3)
-      }
-    })()
-  }, []);
+  const { userList } = useContext(UserContext)
   return (
     <>
       <Row>
@@ -30,8 +20,8 @@ const Users = () => {
           </Button>
           <div style={{ marginTop: 20 }}>
             {
-              users
-                ? users.map(
+              userList
+                ? userList.map(
                   item => <Row key={item._id}>
                     <Col flex="1">
                       <div style={{}}>

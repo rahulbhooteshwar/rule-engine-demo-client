@@ -7,25 +7,13 @@ import { Link } from 'react-router-dom';
 const { Option } = Select;
 
 const SimulateUserSession = () => {
-  const { user, setUser } = useContext(UserContext)
-  const [userList, setUserList] = useState()
+  const { user, setUser, userList } = useContext(UserContext)
   const [loading, setLoading] = useState(false)
   const [contents, setContents] = useState()
   const onUserSelect = (value) => {
     const selected = userList.find(({ _id }) => _id === value)
     setUser(selected)
   }
-  useEffect(() => {
-    (async () => {
-      try {
-        const { data } = await Axios.get(`${process.env.REACT_APP_API_URL}/users`);
-        setUserList(data)
-      } catch (e) {
-        message.error(e.message, 3)
-      }
-    })()
-
-  }, [])
   useEffect(() => {
     if (user) {
       setLoading(true);
