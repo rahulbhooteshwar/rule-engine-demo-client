@@ -42,22 +42,10 @@ const CreateUpdateRule = () => {
     const { data: rule } = await Axios.get(`${process.env.REACT_APP_API_URL}/rules/${_id}`);
     setTitle(rule.title);
     setMatchType(rule.conditionMatchType);
-    const langCondition = rule.conditions.find(condition => condition.attribute === 'lang')
-    if (langCondition) {
-      setSelectedLanguages(langCondition.inValues)
-    }
-    const marketCondition = rule.conditions.find(condition => condition.attribute === 'market')
-    if (marketCondition) {
-      setSelectedMarkets(marketCondition.inValues)
-    }
-    const segCondition = rule.conditions.find(condition => condition.attribute === 'issuerSegmentation')
-    if (segCondition) {
-      setSelectedIssuerSegmentations(segCondition.inValues)
-    }
-    const countryCondition = rule.conditions.find(condition => condition.attribute === 'country')
-    if (countryCondition) {
-      setSelectedCountries(countryCondition.inValues)
-    }
+    setSelectedLanguages(rule.languages);
+    setSelectedMarkets(rule.markets);
+    setSelectedIssuerSegmentations(rule.issuerSegmentations)
+    setSelectedCountries(rule.countries);
     setSelectedRegions(rule.regions);
   }
   const onRegionSelect = () => {
@@ -118,40 +106,24 @@ const CreateUpdateRule = () => {
 
   const handleSubmit = async () => {
     setSubmitting(true)
+    if (
+      selectedCountries.length === 0
+      && selectedLanguages.length === 0
+      && selectedMarkets.length === 0
+      && selectedIssuerSegmentations.length === 0
+    ) {
+      message.error('Rules without conditions have no significance!', 3);
+      setSubmitting(false)
+      return
+    }
     const body = {
       title,
       regions: selectedRegions,
       conditionMatchType: matchType,
-      conditions: []
-    }
-    if (selectedMarkets && selectedMarkets.length > 0) {
-      body.conditions.push({
-        attribute: 'market',
-        inValues: selectedMarkets
-      })
-    }
-    if (selectedCountries && selectedCountries.length > 0) {
-      body.conditions.push({
-        attribute: 'country',
-        inValues: selectedCountries
-      })
-    }
-    if (selectedLanguages && selectedLanguages.length > 0) {
-      body.conditions.push({
-        attribute: 'lang',
-        inValues: selectedLanguages
-      })
-    }
-    if (selectedIssuerSegmentations && selectedIssuerSegmentations.length > 0) {
-      body.conditions.push({
-        attribute: 'issuerSegmentation',
-        inValues: selectedIssuerSegmentations
-      })
-    }
-    if (!body.conditions || body.conditions.length === 0) {
-      message.error('Rules without conditions have no significance!', 3);
-      setSubmitting(false)
-      return
+      countries: selectedCountries,
+      markets: selectedMarkets,
+      languages: selectedLanguages,
+      issuerSegmentations: selectedIssuerSegmentations
     }
     try {
       if (_id) {
@@ -200,7 +172,7 @@ const CreateUpdateRule = () => {
                 <Button onClick={() => { history.push('/rules') }} size="large" >Cancel</Button>
               </Space>
               <Space style={{ float: 'right', marginTop: '25px' }}>
-                <Button disabled={!(selectedRegions && selectedRegions.length > 0) || !title || !matchType } onClick={handleSubmit} size="large" type="primary">{_id ? 'Update' : 'Create'}</Button>
+                <Button disabled={!(selectedRegions && selectedRegions.length > 0) || !title || !matchType} onClick={handleSubmit} size="large" type="primary">{_id ? 'Update' : 'Create'}</Button>
               </Space>
             </Spin>
           </Card>
