@@ -4,14 +4,13 @@ import App from './App';
 import { BrowserRouter } from 'react-router-dom';
 import "antd/dist/antd.css";
 import './index.css';
-import UserProvider from './context/UserContext';
+import { ReactQueryDevtools } from 'react-query-devtools';
 
 ReactDOM.render(
   // <React.StrictMode>
   <BrowserRouter basename={process.env.PUBLIC_URL}>
-    <UserProvider>
+      <ReactQueryDevtools initialIsOpen={false} />
       <App />
-    </UserProvider>
   </BrowserRouter>,
   // </React.StrictMode>,
   document.getElementById('root')

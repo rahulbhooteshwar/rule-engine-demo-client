@@ -1,21 +1,19 @@
-import React, { useEffect, useState } from 'react'
+import React from 'react'
 import { Select, Typography } from 'antd';
-import Axios from 'axios';
+import { useQuery } from 'react-query';
 const { Option } = Select;
 const { Text } = Typography;
+const fetchRegions = async () => {
+  const res = await fetch(`${process.env.REACT_APP_API_URL}/regions`)
+  return res.json()
+}
 const RegionSelector = ({ region, setRegion }) => {
-  const [regions, setRegions] = useState([]);
-  useEffect(() => {
-    (async () => {
-      const { data } = await Axios.get(`${process.env.REACT_APP_API_URL}/regions`);
-      setRegions(data);
-    })()
-  }, [])
+  const {data: regions} = useQuery('regions', fetchRegions)
   return (
     <>
       <Text type="primary" strong>Region</Text>
       <br />
-      <Select value={region} size='large' style={{ width: '100%' }} onChange={setRegion} loading={!regions.length}>
+      <Select value={region} size='large' style={{ width: '100%' }} onChange={setRegion} loading={!regions}>
         <Option value={null}>Select Region</Option>
         {
           regions && regions.map(

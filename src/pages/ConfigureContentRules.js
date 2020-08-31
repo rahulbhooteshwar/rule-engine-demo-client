@@ -1,17 +1,37 @@
-import React, { useState, useEffect} from 'react'
+import React, { useState } from 'react'
 import { List, Row, Switch, Col, Card, message, Skeleton, Spin, Typography, Divider, Result, Button, Space, PageHeader, Radio } from 'antd'
 import RuleList from '../components/RuleList'
 import { useParams, useHistory } from 'react-router';
-import Axios from 'axios';
 import Avatar from 'antd/lib/avatar/avatar';
 import { DeleteOutlined, FundViewOutlined } from '@ant-design/icons'
 import RegionSelector from '../components/RegionSelector';
+import { useQuery, useMutation, queryCache } from 'react-query';
 const { Title, Text } = Typography
+const fetchContent = async (_key, _id) => {
+  const response = await fetch(`${process.env.REACT_APP_API_URL}/contents/${_id}`)
+  return response.json()
+}
+const updateContentMutation = async ({ _id, data }) => {
+  const response = await fetch(`${process.env.REACT_APP_API_URL}/contents/${_id}`, {
+    method: 'PUT',
+    headers: {
+      'Content-Type': 'application/json'
+    },
+    body: JSON.stringify(data)
+  });
+  return response;
+}
 const ConfigureContentRules = () => {
   const history = useHistory();
   const { _id } = useParams();
-  const [loading, setLoading] = useState(false);
-  const [content, setContent] = useState();
+  const { data: content, status } = useQuery(['getContent', _id], fetchContent, {enabled:_id})
+  const [updateContent] = useMutation(updateContentMutation, {
+    onSuccess: async () => {
+      message.success('Content Updated Successfully', 3)
+      await queryCache.invalidateQueries(['getContent', _id])
+      setUpdatingRules(false)
+    }
+  })
   const [updatingRules, setUpdatingRules] = useState(false);
   const [search, setSearch] = useState();
   const [region, setRegion] = useState('5f22f961ab69d5439029b3e8');
@@ -22,14 +42,7 @@ const ConfigureContentRules = () => {
     if (ruleIds.indexOf(newRuleId) === -1) {
       setUpdatingRules(true)
       ruleIds.push(newRuleId)
-      try {
-        const { data } = await Axios.put(`${process.env.REACT_APP_API_URL}/contents/${_id}`, { rules: ruleIds });
-        setContent(data);
-        setUpdatingRules(false)
-      } catch (e) {
-        message.error(e.message)
-        setUpdatingRules(false)
-      }
+      updateContent({_id, data: {rules: ruleIds}})
     } else {
       message.warn('The rule you are trying to apply, is already applied to this content', 5)
     }
@@ -38,42 +51,12 @@ const ConfigureContentRules = () => {
     setUpdatingRules(true)
     let ruleIds = content.rules.map(({ _id }) => _id)
     ruleIds = ruleIds.filter(_id => _id !== ruleToRemove)
-    try {
-      const { data } = await Axios.put(`${process.env.REACT_APP_API_URL}/contents/${_id}`, { rules: ruleIds });
-      setContent(data);
-      setUpdatingRules(false)
-    } catch (e) {
-      message.error(e.message)
-      setUpdatingRules(false)
-    }
+    updateContent({_id, data: {rules: ruleIds}})
   }
   const updateRuleMatchType = async (ruleMatchType) => {
     setUpdatingRules(true)
-    try {
-      const { data } = await Axios.put(`${process.env.REACT_APP_API_URL}/contents/${_id}`, { ruleMatchType });
-      setContent(data);
-      setUpdatingRules(false)
-      message.success(`Updated: ${ruleMatchType} rule(s) will be matched during content targetting for users!`)
-    } catch (e) {
-      message.error(e.message)
-      setUpdatingRules(false)
-    }
+    updateContent({_id, data: { ruleMatchType }})
   }
-  useEffect(() => {
-    if (_id) {
-      setLoading(true)
-      try {
-        (async () => {
-          const { data } = await Axios.get(`${process.env.REACT_APP_API_URL}/contents/${_id}`);
-          setContent(data)
-          setLoading(false)
-        })()
-      } catch (e) {
-        message.error(e.message)
-        setLoading(false)
-      }
-    }
-  }, [_id])
   return (
     <>
       <PageHeader
@@ -94,7 +77,7 @@ const ConfigureContentRules = () => {
       <Row>
         <Col span={12}>
           <Card title="Content Details" bordered style={{ width: '100%', minHeight: '80vh' }}>
-            <Spin size="large" spinning={loading}>
+            <Spin size="large" spinning={status === 'loading'}>
               {
                 content ?
                   <>

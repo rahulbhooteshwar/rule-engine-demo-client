@@ -1,32 +1,31 @@
-/* eslint-disable react-hooks/exhaustive-deps */
-import React, { useEffect, useState } from 'react'
+import React, { useEffect } from 'react'
 import { Select, Typography } from 'antd';
-import Axios from 'axios';
+import { useQuery } from 'react-query';
 const { Option } = Select;
 const { Text } = Typography;
-
+const fetchLanguages = async (_key, country) => {
+  const res = await fetch(`${process.env.REACT_APP_API_URL}/languages?country=${country}`)
+  return res.json()
+}
 const LangSelector = ({ country, lang, setLang }) => {
-  const [langs, setLangs] = useState([]);
+  const {data:langs, status} = useQuery(['langs', country], fetchLanguages, {enabled:country})
   useEffect(() => {
-    if (country) {
-      setLangs([]);
-      (async () => {
-        const { data } = await Axios.get(`${process.env.REACT_APP_API_URL}/languages?country=${country}`);
-        setLangs(data);
-        const match = data.find(item => item._id === lang)
-        if (!match) {
-          setLang(null);
-        }
-      })()
+    if (langs) {
+      const match = langs.find(item => item._id === lang)
+      if (!match) {
+        setLang(null);
+      }
     } else {
-      setLangs([]);
+      if (status !== 'loading') {
+        setLang(null);
+      }
     }
-  }, [country, setLang])
+  }, [langs, setLang, lang, status])
   return (
     <>
       <Text type="primary" strong>Language</Text>
       <br />
-      <Select value={lang} size='large' style={{ width: '100%' }} onChange={setLang} loading={!langs.length}>
+      <Select value={lang} size='large' style={{ width: '100%' }} onChange={setLang} loading={!langs}>
         <Option value={null}>Select Lang</Option>
         {
           langs && langs.map(

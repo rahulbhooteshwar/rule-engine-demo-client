@@ -1,14 +1,18 @@
-import React, { useContext } from 'react'
-import { Row, Col, Card, Button, Typography, Skeleton, Tag } from 'antd'
+import React from 'react'
+import { useQuery } from 'react-query'
+import { Row, Col, Button, Typography, Skeleton } from 'antd'
 import { PlusOutlined } from '@ant-design/icons'
-import Avatar from 'antd/lib/avatar/avatar';
 import { Link, useHistory } from 'react-router-dom';
-import { UserContext } from '../context/UserContext';
-const { Title} = Typography;
+import UserDetails from '../components/UserDetails';
+const { Title } = Typography;
 
+const fetchUsers = async () => {
+  const res = await fetch(`${process.env.REACT_APP_API_URL}/users`)
+  return res.json()
+}
 const Users = () => {
+  const { data: userList } = useQuery('userList', fetchUsers)
   const history = useHistory();
-  const { userList } = useContext(UserContext)
   return (
     <>
       <Row>
@@ -26,21 +30,8 @@ const Users = () => {
                     <Col flex="1">
                       <div style={{}}>
                         <Link to={`/users/update/${item._id}`}>
-                        <Card bordered style={{ width: '100%', marginTop: 20 }}
-                          hoverable>
-                          <Avatar shape="circle" size={64} src={item.image} />
-                          <h2 style={{ display: 'inline-block' }}>
-                            {item.name}
-                          </h2>
-                          <h3>
-                            <Tag color="magenta">REGION : <strong>{item.region.title}</strong></Tag>
-                            <Tag color="orange">COUNTRY : <strong>{item.country.title}</strong> </Tag>
-                            <Tag color="green">LANGUAGE : <strong>{item.lang.title}</strong> </Tag>
-                            <Tag color="blue">MARKET : <strong>{item.market.title}</strong> </Tag>
-                            <Tag color="purple">SEGMENT : <strong>{item.issuerSegmentation.title}</strong></Tag>
-                          </h3>
-                          </Card>
-                          </Link>
+                          <UserDetails user={item} />
+                        </Link>
                       </div>
                     </Col>
                   </Row>

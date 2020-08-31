@@ -1,14 +1,52 @@
-import React, { useEffect, useState, useContext } from 'react'
+import React, { useEffect, useState } from 'react'
 import { useParams, useHistory } from 'react-router'
-import Axios from 'axios'
 import { message, Row, Col, Card, Skeleton, Button, Space, Spin, PageHeader } from 'antd'
 import CreateUpdateUserForm from '../components/CreateUpdateUserForm'
-import { UserContext } from '../context/UserContext'
-
+import { useMutation, queryCache, useQuery } from 'react-query'
+const addUserMutation = async (user) => {
+  const response = await fetch(`${process.env.REACT_APP_API_URL}/users`, {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json'
+    },
+    body: JSON.stringify(user)
+  });
+  return response.json();
+}
+const updateUserMutation = async ({ _id, user }) => {
+  const response = await fetch(`${process.env.REACT_APP_API_URL}/users/${_id}`, {
+    method: 'PUT',
+    headers: {
+      'Content-Type': 'application/json'
+    },
+    body: JSON.stringify(user)
+  });
+  return response;
+}
+const fetchUser = async (_key, _id) => {
+  const response = await fetch(`${process.env.REACT_APP_API_URL}/users/${_id}`);
+  return response.json();
+}
 const CreateUpdateUser = () => {
-  const { dispatchUserListAction } = useContext(UserContext)
-  const history = useHistory();
   const { _id } = useParams()
+  const { data: user } = useQuery(['getUser', _id], fetchUser, { enabled: _id })
+  const [addUser] = useMutation(addUserMutation, {
+    onSuccess: async () => {
+      message.success('User Created Successfully', 3)
+      await queryCache.invalidateQueries('userList')
+      setSubmitting(false)
+      history.push('/users')
+    },
+  })
+  const [updateUser] = useMutation(updateUserMutation, {
+    onSuccess: async () => {
+      message.success('User Updated Successfully', 3)
+      await queryCache.invalidateQueries('userList')
+      setSubmitting(false)
+      history.push('/users')
+    },
+  })
+  const history = useHistory();
   const [loading, setLoading] = useState(false);
   const [submitting, setSubmitting] = useState(false);
   const [name, setName] = useState(null);
@@ -19,40 +57,24 @@ const CreateUpdateUser = () => {
   const [issuerSegmentation, setIssuerSegmentation] = useState(null);
 
   useEffect(() => {
-    if (_id) {
-      (async () => {
-        setLoading(true);
-        try {
-          const { data } = await Axios.get(`${process.env.REACT_APP_API_URL}/users/${_id}`);
-          init(data)
-        } catch (e) {
-          message.error(e.message, 3)
-          setLoading(false)
-        }
-      })()
+    if (user) {
+      setName(user.name)
+      setRegion(user.region._id)
+      setMarket(user.market._id)
+      setIssuerSegmentation(user.issuerSegmentation._id)
+      setCountry(user.country._id)
+      setLang(user.lang._id)
+      setLoading(false)
     }
-  }, [_id])
-  const init = (user) => {
-    setName(user.name)
-    setRegion(user.region._id)
-    setMarket(user.market._id)
-    setIssuerSegmentation(user.issuerSegmentation._id)
-    setCountry(user.country._id)
-    setLang(user.lang._id)
-    setLoading(false)
-  }
+  }, [user])
   const handleSubmit = async () => {
     setSubmitting(true);
     try {
       if (_id) {
-        const { data } = await Axios.put(`${process.env.REACT_APP_API_URL}/users/${_id}`, { name, region, country, lang: lang, market, issuerSegmentation });
-        dispatchUserListAction({ type: 'UPDATE', payload: data });
+        await updateUser({ _id, user: { name, region, country, lang: lang, market, issuerSegmentation } })
       } else {
-        const { data } = await Axios.post(`${process.env.REACT_APP_API_URL}/users`, { name, region, country, lang: lang, market, issuerSegmentation });
-        dispatchUserListAction({ type: 'ADD', payload: data });
-        message.success('User Created Successfully', 3)
+        await addUser({ name, region, country, lang: lang, market, issuerSegmentation })
       }
-      history.push('/users')
     } catch (e) {
       message.error(e.message, 3)
       setSubmitting(false)

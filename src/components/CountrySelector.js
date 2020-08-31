@@ -1,33 +1,31 @@
-/* eslint-disable react-hooks/exhaustive-deps */
-
-import React, { useEffect, useState } from 'react'
+import React, { useEffect } from 'react'
 import { Select, Typography } from 'antd';
-import Axios from 'axios';
+import { useQuery } from 'react-query';
 const { Option } = Select;
 const { Text } = Typography;
-
+const fetchCountries = async (_key, region) => {
+  const res = await fetch(`${process.env.REACT_APP_API_URL}/countries?region=${region}`)
+  return res.json()
+}
 const CountrySelector = ({ region, country, setCountry }) => {
-  const [countries, setCountries] = useState([]);
+  const {data: countries, status} = useQuery(['countries', region], fetchCountries, {enabled: region})
   useEffect(() => {
-    if (region) {
-      setCountries([]);
-      (async () => {
-        const { data } = await Axios.get(`${process.env.REACT_APP_API_URL}/countries?region=${region}`);
-        setCountries(data);
-        const match = data.find(item => item._id === country)
-        if (!match) {
-          setCountry(null);
-        }
-      })()
+    if (countries) {
+      const match = countries.find(item => item._id === country)
+      if (!match) {
+        setCountry(null);
+      }
     } else {
-      setCountries([]);
+      if (status !== 'loading') {
+        setCountry(null);
+      }
     }
-  }, [region, setCountry])
+  }, [countries, country, setCountry, status])
   return (
     <>
       <Text type="primary" strong>Country</Text>
       <br />
-      <Select value={country} size='large' style={{ width: '100%' }} onChange={setCountry} loading={!countries.length}>
+      <Select value={country} size='large' style={{ width: '100%' }} onChange={setCountry} loading={!countries}>
         <Option value={null}>Select Country</Option>
         {
           countries && countries.map(

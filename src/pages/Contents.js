@@ -1,35 +1,60 @@
-import React, { useState, useEffect } from 'react'
+import React, { useState } from 'react'
 import { Row, Col, Card, Button, Typography, message, Skeleton, Tag, Input, Spin } from 'antd'
 import { PlusOutlined, SettingOutlined, EditOutlined } from '@ant-design/icons'
-import Axios from 'axios';
 import Avatar from 'antd/lib/avatar/avatar';
 import { useHistory } from 'react-router-dom';
 import Modal from 'antd/lib/modal/Modal';
+import { useQuery, useMutation, queryCache } from 'react-query';
 const { Title } = Typography;
+const fetchContents = async () => {
+  const response = await fetch(`${process.env.REACT_APP_API_URL}/contents`)
+  return response.json()
+}
+const addContentMutation = async (content) => {
+  const response = await fetch(`${process.env.REACT_APP_API_URL}/contents`, {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json'
+    },
+    body: JSON.stringify(content)
+  });
+  return response.json();
+}
+const updateContentMutation = async ({_id, title}) => {
+  const response = await fetch(`${process.env.REACT_APP_API_URL}/contents/${_id}`, {
+    method: 'PUT',
+    headers: {
+      'Content-Type': 'application/json'
+    },
+    body: JSON.stringify({title})
+  });
+  return response.json();
+}
 const Contents = () => {
   const history = useHistory();
+  const {data: contents} = useQuery('contents', fetchContents)
+  const [addContent] = useMutation(addContentMutation, {
+    onSuccess: async () => {
+      message.success('Content Created Successfully', 3)
+      await queryCache.invalidateQueries('contents')
+    },
+  })
+  const [updateContent] = useMutation(updateContentMutation, {
+    onSuccess: async () => {
+      message.success('Content Updated Successfully', 3)
+      await queryCache.invalidateQueries('contents')
+    },
+  })
   const [showCreateModal, setShowCreateModal] = useState(false)
   const [showUpdateModal, setShowUpdateModal] = useState(false)
-  const [contents, setContents] = useState();
   const [contentTitle, setContentTitle] = useState();
   const [currentContent, setCurrentContent] = useState();
   const [submitting, setSubmitting] = useState(false);
-  useEffect(() => {
-    (async () => {
-      try {
-        const { data } = await Axios.get(`${process.env.REACT_APP_API_URL}/contents`);
-        setContents(data)
-      } catch (e) {
-        message.error(e.message, 3)
-      }
-    })()
-  }, []);
   const handleCreate = async () => {
     if (contentTitle) {
       setSubmitting(true)
       try {
-        const { data } = await Axios.post(`${process.env.REACT_APP_API_URL}/contents`, { title: contentTitle });
-        setContents([data, ...contents])
+        await addContent({ title: contentTitle })
         setShowCreateModal(false)
         setSubmitting(false)
         setContentTitle(null)
@@ -41,17 +66,9 @@ const Contents = () => {
   }
   const handleUpdate = async () => {
     if (currentContent && currentContent.title) {
-
       setSubmitting(true)
       try {
-        const { data } = await Axios.put(`${process.env.REACT_APP_API_URL}/contents/${currentContent._id}`, { title: currentContent.title });
-        const updated = contents.map(content => {
-          if (content._id === data._id) {
-            return data;
-          }
-          return content
-        })
-        setContents(updated)
+        await updateContent(currentContent)
         setShowUpdateModal(false)
         setSubmitting(false)
         setCurrentContent(null)

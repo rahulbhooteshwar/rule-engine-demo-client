@@ -1,41 +1,28 @@
 import React, { useState, useEffect } from 'react'
-import Axios from 'axios';
-import { message, Row, Col, Skeleton, Card, Tag, Input } from 'antd';
+import { Row, Col, Skeleton, Card, Tag, Input } from 'antd';
 import { RightCircleOutlined } from '@ant-design/icons'
 import { useHistory } from 'react-router';
+import { useQuery } from 'react-query';
+const fetchRules = async (_key, region, keyword) => {
+  const url = new URL(`${process.env.REACT_APP_API_URL}/rules`)
+  if (region) {
+    url.searchParams.append('regions', region)
+  }
+  if (keyword) {
+    url.searchParams.append('keyword', keyword)
+  }
+  const response = await fetch(url)
+  return response.json()
+}
 const RuleList = ({ region, lazy = false, search, clickAction = null }) => {
-  const [rules, setRules] = useState();
-  const [keyword, setKeyword] = useState();
-  const [loading, setLoading] = useState(false);
   const history = useHistory();
+  const [keyword, setKeyword] = useState();
+  const {data:rules, status} = useQuery(['fetchRules', region, keyword], fetchRules, {enabled: (!lazy || (lazy && keyword && keyword.length > 2))})
   useEffect(() => {
     if (search) {
       setKeyword(search)
     }
   }, [search])
-  useEffect(() => {
-    if (!lazy || (lazy && keyword && keyword.length > 2)) {
-      (async () => {
-        let url = `${process.env.REACT_APP_API_URL}/rules`;
-        let params = {};
-        if (region) {
-          params.regions = region
-        }
-        if (keyword) {
-          params.keyword = keyword
-        }
-        try {
-          setLoading(true)
-          const { data } = await Axios.get(url, { params: params });
-          setRules(data)
-          setLoading(false)
-        } catch (e) {
-          setLoading(false)
-          message.error(e.message, 3)
-        }
-      })()
-    }
-  }, [region, lazy, keyword]);
   const handleClick = (_id) => {
     if (clickAction) {
       clickAction(_id)
@@ -53,7 +40,7 @@ const RuleList = ({ region, lazy = false, search, clickAction = null }) => {
               : ''
           }
           {
-            loading ?
+            status === 'loading' ?
               <>
                 <Skeleton active paragraph={{ rows: 2 }} />
                 <Skeleton active paragraph={{ rows: 2 }} />
@@ -64,7 +51,7 @@ const RuleList = ({ region, lazy = false, search, clickAction = null }) => {
           }
           <div style={{ marginTop: 20 }}>
             {
-              rules && !loading
+              rules && status !== 'loading'
                 ? rules.map(
                   item => <Card onClick={() => handleClick(item._id)} key={item._id} bordered style={{ width: '100%', marginTop: 20 }}
                     hoverable>
