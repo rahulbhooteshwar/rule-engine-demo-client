@@ -14,7 +14,7 @@
 importScripts("https://storage.googleapis.com/workbox-cdn/releases/4.3.1/workbox-sw.js");
 
 importScripts(
-  "/rule-engine-demo-client/precache-manifest.b78fd0ad07d2e789c3e09079528537ca.js"
+  "/rule-engine-demo-client/precache-manifest.009a1beef0673650e06c2a63987460bc.js"
 );
 
 self.addEventListener('message', (event) => {
